@@ -113,14 +113,16 @@ void *malloc(size_t __attribute__((unused)) size)
     struct metadata *block;
     size = allign(size);
     block = find_block(size);
+    if(block == NULL)
+        return NULL;
     add_block(block ,size);
   //  print_fl(freelist);
     return block + 1;
 }
-
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
+    return;
 }
 
     __attribute__((visibility("default")))
@@ -130,9 +132,3 @@ void *realloc(void __attribute__((unused)) *ptr,
     return NULL;
 }
 
-    __attribute__((visibility("default")))
-void *calloc(size_t __attribute__((unused)) nmemb,
-        size_t __attribute__((unused)) size)
-{
-    return NULL;
-}
