@@ -31,6 +31,11 @@ void set_block(struct metadata *b ,size_t s , int free ,\
 
 void remove_from_free(struct metadata *fl , struct metadata *block)
 {
+    if(fl == block)
+    {
+        freelist = fl->nxt_free;//use freelist directly as changing head
+        return;
+    }
     for(; fl->nxt_free != block; fl = fl->nxt_free);
     fl->nxt_free = fl->nxt_free->nxt_free; 
 }
@@ -41,7 +46,6 @@ void add_to_free(struct metadata *fl , struct metadata *block)
 }
 struct metadata *find_block(size_t size)
 {
-    warnx("%d" , METASIZE);
     struct metadata *block;
     void *map;
     if(freelist == NULL) // first block
