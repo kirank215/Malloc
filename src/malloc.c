@@ -1,9 +1,9 @@
 #define _GNU_SOURCE
 #include <stddef.h>
+#include<err.h>
 #include<sys/mman.h>
 #include "malloc.h"
-#define METASIZE sizeof(struct metadata)
-
+#define METASIZE allign(sizeof(struct metadata))
 void *freelist = NULL;
 
 void *addpointer(void *b , int a)
@@ -13,7 +13,13 @@ void *addpointer(void *b , int a)
     return s;
 }
 
-void set_block(struct metadata *b ,int s , int free ,\
+int allign( size_t s)
+{
+    int size = sizeof(size_t);
+    s = (s + (size - 1)) & ~(size - 1);
+    return s;
+}
+void set_block(struct metadata *b ,size_t s , int free ,\
                 struct metadata *n ,struct metadata *p , struct metadata *nf )
 {
     b->size = s;
@@ -35,6 +41,7 @@ void add_to_free(struct metadata *fl , struct metadata *block)
 }
 struct metadata *find_block(size_t size)
 {
+    warnx("%d" , METASIZE);
     struct metadata *block;
     void *map;
     if(freelist == NULL) // first block
@@ -62,9 +69,9 @@ struct metadata *find_block(size_t size)
     return block;
 }
 
-void add_block(struct metadata *b1 , int s)
+void add_block(struct metadata *b1 , size_t s)
 {
-    if((b1->size) > s + 2*METASIZE) //split- create a new block if you can
+    if((b1->size) > s + METASIZE + METASIZE) //split- create a new block if you can
     {
         int prev_size = b1->size;
         struct metadata *b2 = addpointer(b1 + 1 , s);    // b1 + 1 is data
