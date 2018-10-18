@@ -1,5 +1,6 @@
-FREE LIST IMPLEMENTATION
-Malloc
+FREE LIST IMPLEMENTATION  (x)
+Malloc     (x)   
+Separate functions (x)
 TEST SUITE
 Calloc
 Realloc

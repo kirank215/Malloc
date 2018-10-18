@@ -4,7 +4,7 @@
 #include<sys/mman.h>
 #include "malloc.h"
 #define METASIZE allign(sizeof(struct metadata))
-void *freelist = NULL;
+struct metadata *freelist = NULL;
 
 void *addpointer(void *b , int a)
 {
@@ -20,7 +20,7 @@ int allign( size_t s)
     return s;
 }
 void set_block(struct metadata *b ,size_t s , int free ,\
-                struct metadata *n ,struct metadata *p , struct metadata *nf )
+        struct metadata *n ,struct metadata *p , struct metadata *nf )
 {
     b->size = s;
     b->is_free = free;
@@ -44,31 +44,50 @@ void add_to_free(struct metadata *fl , struct metadata *block)
     for(; fl->nxt_free != NULL; fl = fl->nxt_free);
     fl->nxt_free = block;
 }
+/*
+void print_fl(struct metadata *fl)
+{
+    warnx( " FREELIST " );
+    for(; fl != NULL; fl = fl->nxt_free)
+        warnx("\t %ld \t" , fl->size);
+}
+*/
+void *newpage(int size)
+{
+    struct metadata *block;
+    size = ((size + METASIZE)/4096 + 1)*4096; // manage size if > 4096
+    block = mmap(NULL , size , PROT_READ | PROT_WRITE , \
+            MAP_PRIVATE | MAP_ANONYMOUS , -1 , 0);
+    if(block == MAP_FAILED)
+        return NULL;
+    set_block(block , size - METASIZE , 1 , NULL , NULL , NULL);
+    return block;
+
+}
 struct metadata *find_block(size_t size)
 {
     struct metadata *block;
-    void *map;
     if(freelist == NULL) // first block
     {
-        size = ((size + METASIZE)/4096 + 1)*4096; // manage size if > 4096
-        map = mmap(NULL , size , PROT_READ | PROT_WRITE , \
-                                MAP_PRIVATE | MAP_ANONYMOUS , -1 , 0);
-        if(map == MAP_FAILED)
+        block = newpage(size);
+        if(block == NULL)
             return NULL;
-        block = map;
         freelist = block;     // freelist is now set to starting of the block
-        set_block(block , size - METASIZE , 1 , NULL , NULL , NULL);
     } 
     else
     {
         block = freelist;
-        while(block->nxt_free != NULL && block->nxt_free->size > size) 
+        if(block->size > size)
+            return block;
+        while(block->nxt_free != NULL && block->nxt_free->size < size) 
             block = block->nxt_free;
         if(block->nxt_free == NULL)
-            block->nxt_free = mmap(NULL , 4096 , PROT_READ | PROT_WRITE , \
-                                    MAP_PRIVATE | MAP_ANONYMOUS , -1 , 0);
+        {
+            block->nxt_free = newpage(size);
+            if(block->nxt_free == NULL)
+                return NULL;
+        }
         block = block->nxt_free;
-        
     }
     return block;
 }
@@ -88,31 +107,32 @@ void add_block(struct metadata *b1 , size_t s)
     remove_from_free(freelist , b1);
 }
 
-__attribute__((visibility("default")))
+    __attribute__((visibility("default")))
 void *malloc(size_t __attribute__((unused)) size)
 {
     struct metadata *block;
     size = allign(size);
     block = find_block(size);
     add_block(block ,size);
-	return block + 1;
+  //  print_fl(freelist);
+    return block + 1;
 }
 
-__attribute__((visibility("default")))
+    __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
 }
 
-__attribute__((visibility("default")))
+    __attribute__((visibility("default")))
 void *realloc(void __attribute__((unused)) *ptr,
-             size_t __attribute__((unused)) size)
+        size_t __attribute__((unused)) size)
 {
-	return NULL;
+    return NULL;
 }
 
-__attribute__((visibility("default")))
+    __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
-             size_t __attribute__((unused)) size)
+        size_t __attribute__((unused)) size)
 {
-	return NULL;
+    return NULL;
 }
