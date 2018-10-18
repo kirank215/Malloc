@@ -1,6 +1,7 @@
 CFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -fPIC -fvisibility=hidden
 LDFLAGS = -shared
 TARGET_LIB = libmalloc.so
+VPATH = . src
 OBJS = malloc.o
 
 .PHONY: all ${TARGET_LIB} clean
