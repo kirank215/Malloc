@@ -5,3 +5,14 @@ TEST SUITE
 Calloc   (x) to debug
 Realloc  (x) to debug 
 Free  (x) working (x)
+
+TESTS :
+— ls    (x)
+— ls -la (x)
+— tar -cf malloc.tar libmalloc.so (x)
+— find /    (x)
+— tree /    ------
+— od libmalloc.so (x)
+— git status ---------
+— less Makefile (x)
+— clang -h  ------
