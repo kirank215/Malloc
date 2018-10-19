@@ -15,10 +15,20 @@ int is_alligned(void *p)
         return 1;
     return 0;
 }
+void *mycopy(void *a , void *b , size_t size)
+{
+    char *src = a;
+    char *dest = b;
+    for(size_t i = 0; i < size; i++)
+    {
+        *(dest + i) = *(src + i);
+    }   
+    return dest;
+}
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
-    warnx("free");
+    //warnx("free");
     if(ptr == NULL)
     {
       //  warnx("free null");
@@ -39,7 +49,7 @@ void free(void __attribute__((unused)) *ptr)
 void *calloc(size_t __attribute__((unused)) nmemb,
         size_t __attribute__((unused)) size)
 {
-    warnx("calloc");
+    //warnx("calloc");
     size_t numbytes = nmemb * size;
     if( nmemb != 0 && numbytes/nmemb != size)
         warnx("overflow");
@@ -54,7 +64,7 @@ void *calloc(size_t __attribute__((unused)) nmemb,
 void *realloc(void __attribute__((unused)) *ptr,
         size_t __attribute__((unused)) size)
 {
-    warnx("--Realloc--");
+    //warnx("--Realloc--");
     if(ptr == NULL)
         return malloc(size);
     else if( size == 0)
@@ -74,6 +84,6 @@ void *realloc(void __attribute__((unused)) *ptr,
     struct metadata *new_b = malloc(size);
     if(new_b == NULL)
         return NULL;
-    new_b = memcpy(new_b , block , block->size);
+    new_b = mycopy(block , new_b , block->size);
     return new_b;
 }
