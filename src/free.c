@@ -1,45 +1,47 @@
-/*#include<stdio.h>
+#include<stdio.h>
 #include<stdint.h>
 #include<stdlib.h>
 #include<err.h>
+#include<string.h>
 #include "malloc.h"
 #define METASIZE allign(sizeof(struct metadata))
 
 extern struct metadata *freelist;
-void *allign_pointer(void *p)
+int is_alligned(void *p)
 {
-    p = addpointer(p , (size - 1));
-    p = p & ~(size - 1);
-    char *c = p;
-    int size = sizeof(size_t);
-    return (c + sizeof(size_t)) & (char *)~(size - 1);
-}
-void fill_zero(void *p , size_t size)
-{
-    char *c = p;
-    for(size_t i = 0; i < size; i++)
-    {
-        *(c + i)  = 0;
-    }
+    uintptr_t s = (sizeof(size_t)) - 1;
+    void *p1 = (void *)((uintptr_t)(p) & ~(s));
+    if (p1 == p)
+        return 1;
+    return 0;
 }
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
-  //  if(ptr != allign(ptr))
-   //     warnx(" Invalid free ptr ");
+    if(ptr == NULL)
+    {
+ //       warnx("free null");
+        return;
+    }
+    if(is_alligned(ptr) == 0)
+    {
+        warnx(" Invalid free ptr ");
+        return ;
+    }
     struct metadata *block = addpointer(ptr , -METASIZE);
+//    warnx("free of size %ld" , block->size);
     block->is_free = 1;
     add_to_free(freelist , block);
+   // print_fl(freelist);
 }
     __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
         size_t __attribute__((unused)) size)
 {
-    struct metadata *block = malloc(nmemb * size);
+    void *block = malloc(nmemb * size);
     if(block == NULL)
         return NULL;
-    block -= 1;
-    fill_zero(block , size);
+    block = memset(block , 0 , nmemb * size);
+    block = addpointer(block , - METASIZE);
     return block;
 }
-*/

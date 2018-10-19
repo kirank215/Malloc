@@ -92,7 +92,7 @@ struct metadata *find_block(size_t size)
 
 void add_block(struct metadata *b1 , size_t s)
 {
-   // warnx(" Malloc of size %ld in block %ld" , s , b1->size);
+    warnx(" Malloc of size %ld in block %ld" , s , b1->size);
     if((b1->size) > s + 2* METASIZE) //split- create a new block if you can
     {
         int prev_size = b1->size;
@@ -116,7 +116,7 @@ void *malloc(size_t __attribute__((unused)) size)
     if(block == NULL)
         return NULL;
     add_block(block ,size);
-//    print_fl(freelist);
+    print_fl(freelist);
     return block + 1;
 }
 
