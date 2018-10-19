@@ -44,12 +44,14 @@ void add_to_free(struct metadata *fl , struct metadata *block)
     for(; fl->nxt_free != NULL; fl = fl->nxt_free);
     fl->nxt_free = block;
 }
+/*
 void print_fl(struct metadata *fl)
 {
     warnx( " FREELIST " );
     for(; fl != NULL; fl = fl->nxt_free)
         warnx("\t %ld \t" , fl->size);
 }
+*/
 void *newpage(int size)
 {
     struct metadata *block;
