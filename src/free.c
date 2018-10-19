@@ -18,9 +18,10 @@ int is_alligned(void *p)
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
+    warnx("free");
     if(ptr == NULL)
     {
- //       warnx("free null");
+      //  warnx("free null");
         return;
     }
     if(is_alligned(ptr) == 0)
@@ -29,19 +30,50 @@ void free(void __attribute__((unused)) *ptr)
         return ;
     }
     struct metadata *block = addpointer(ptr , -METASIZE);
-//    warnx("free of size %ld" , block->size);
+    //warnx("free of size %ld" , block->size);
     block->is_free = 1;
     add_to_free(freelist , block);
-   // print_fl(freelist);
+    //print_fl(freelist);
 }
     __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
         size_t __attribute__((unused)) size)
 {
+    warnx("calloc");
+    size_t numbytes = nmemb * size;
+    if( nmemb != 0 && numbytes/nmemb != size)
+        warnx("overflow");
     void *block = malloc(nmemb * size);
     if(block == NULL)
         return NULL;
     block = memset(block , 0 , nmemb * size);
-    block = addpointer(block , - METASIZE);
     return block;
+}
+
+    __attribute__((visibility("default")))
+void *realloc(void __attribute__((unused)) *ptr,
+        size_t __attribute__((unused)) size)
+{
+    warnx("--Realloc--");
+    if(ptr == NULL)
+        return malloc(size);
+    else if( size == 0)
+        free(ptr);
+    if(is_alligned(ptr) == 0)
+        return NULL; 
+    struct metadata *block = ptr;
+    block = addpointer(block , - METASIZE);
+    //warnx(" Realloc of %ld from %ld" , size , block->size);
+    if(block->size > size)
+        return block;
+    /* Free block -- Check merge of block with prev and next -- If succesfull
+        use for realloc -- 
+    [ -- !!  call merge everytime you free with the block you free     !! -- ] 
+    */
+    free(addpointer(block,METASIZE));
+    struct metadata *new_b = malloc(size);
+    if(new_b == NULL)
+        return NULL;
+    new_b = memcpy(new_b , block , block->size);
+    return new_b;
 }

@@ -61,6 +61,7 @@ void *newpage(int size)
     if(block == MAP_FAILED)
         return NULL;
     set_block(block , size - METASIZE , 1 , NULL , NULL , NULL);
+//    print_fl(freelist);
     return block;
 
 }
@@ -94,7 +95,7 @@ struct metadata *find_block(size_t size)
 
 void add_block(struct metadata *b1 , size_t s)
 {
-   // warnx(" Malloc of size %ld in block %ld" , s , b1->size);
+  //  warnx(" Malloc of size %ld in block %ld" , s , b1->size);
     if((b1->size) > s + 2* METASIZE) //split- create a new block if you can
     {
         int prev_size = b1->size;
@@ -120,12 +121,5 @@ void *malloc(size_t __attribute__((unused)) size)
     add_block(block ,size);
 //    print_fl(freelist);
     return block + 1;
-}
-
-    __attribute__((visibility("default")))
-void *realloc(void __attribute__((unused)) *ptr,
-        size_t __attribute__((unused)) size)
-{
-    return NULL;
 }
 
