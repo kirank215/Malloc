@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
-#include <stddef.h>
-#include<err.h>
 #include<sys/mman.h>
+#include<stddef.h>
 #include "malloc.h"
 #define METASIZE allign(sizeof(struct metadata))
 struct metadata *freelist = NULL;
@@ -44,12 +43,6 @@ void add_to_free(struct metadata *fl , struct metadata *block)
     for(; fl->nxt_free != NULL; fl = fl->nxt_free);
     fl->nxt_free = block;
 }
-void print_fl(struct metadata *fl)
-{
-    warnx( " FREELIST " );
-    for(; fl != NULL; fl = fl->nxt_free)
-        warnx("\t %ld \t" , fl->size);
-}
 void *newpage(int size)
 {
     struct metadata *block;
@@ -59,7 +52,6 @@ void *newpage(int size)
     if(block == MAP_FAILED)
         return NULL;
     set_block(block , size - METASIZE , 1 , NULL , NULL , NULL);
-//    print_fl(freelist);
     return block;
 
 }
@@ -93,7 +85,6 @@ struct metadata *find_block(size_t size)
 
 void add_block(struct metadata *b1 , size_t s)
 {
-//    warnx(" Malloc of size %ld in block %ld" , s , b1->size);
     if((b1->size) > s + 2* METASIZE) //split- create a new block if you can
     {
         int prev_size = b1->size;
@@ -117,7 +108,6 @@ void *malloc(size_t __attribute__((unused)) size)
     if(block == NULL)
         return NULL;
     add_block(block ,size);
-//    print_fl(freelist);
     return block + 1;
 }
 
