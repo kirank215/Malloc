@@ -25,10 +25,43 @@ void *mycopy(void *a , void *b , size_t size)
     }   
     return dest;
 }
+/*
+int merge(struct metadata *block)
+{
+    struct metadata *fl = freelist;
+    if( fl->next != NULL && fl->next == block)
+    {
+        fl->size += METASIZE + block->size;
+        return 1;
+    }
+    else if (fl->prev != NULL && fl->prev == block)
+    {
+        block->size += METASIZE + fl->size;
+        freelist = block;
+        return 1;
+    }
+    for(; fl->nxt_free != NULL ; fl = fl->nxt_free)
+    {
+        if(fl->nxt_free->prev == block)
+        {
+            block->nxt_free = fl->nxt_free->nxt_free;
+            block->size += METASIZE + fl->nxt_free->size;
+            fl->nxt_free = block;
+            return 1;
+        }
+        else if (fl->nxt_free->next == block)
+        {
+            fl->nxt_free->size += METASIZE + block->size;
+            return 1;
+        }
+    }
+    return 0;
+}
+*/
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
-    //warnx("free");
+   // warnx("free");
     if(ptr == NULL)
     {
       //  warnx("free null");
@@ -41,9 +74,8 @@ void free(void __attribute__((unused)) *ptr)
     }
     struct metadata *block = addpointer(ptr , -METASIZE);
     block->is_free = 1;
-    add_to_free(freelist , block);
-   // warnx("free of size %ld" , block->size);
-   // print_fl(freelist);
+//    warnx("free of size %ld" , block->size);
+    add_to_free(freelist , block);  // add to free list if could not merge
 }
     __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
@@ -52,7 +84,10 @@ void *calloc(size_t __attribute__((unused)) nmemb,
  //   warnx("calloc");
     size_t numbytes = nmemb * size;
     if( nmemb != 0 && numbytes/nmemb != size)
+    {
+        return NULL;
         warnx("overflow");
+    }
     void *block = malloc(nmemb * size);
     if(block == NULL)
         return NULL;
@@ -76,12 +111,6 @@ void *realloc(void __attribute__((unused)) *ptr,
     //warnx(" Realloc of %ld from %ld" , size , block->size);
     if(block->size > size)
         return ptr;
-    /*
-     Free block -- Check merge of block with prev and next -- If succesfull
-        use for realloc -- 
-    [ -- !!  call merge everytime you free with the block you free     !! -- ] 
-    */
-    
     free(ptr);
     struct metadata *new_b = malloc(size);
     if(new_b == NULL)

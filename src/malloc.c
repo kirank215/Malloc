@@ -33,7 +33,7 @@ void remove_from_free(struct metadata *fl , struct metadata *block)
 {
     if(fl == block)
     {
-        freelist = fl->nxt_free;//use freelist directly as changing head
+        freelist = freelist->nxt_free;//use freelist directly as changing head
         return;
     }
     for(; fl->nxt_free != block; fl = fl->nxt_free);
