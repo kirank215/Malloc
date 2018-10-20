@@ -1,7 +1,7 @@
 FREE LIST IMPLEMENTATION  (x)
 Malloc     (x)   working (x)
 Separate functions (x)
-TEST SUITE
+TEST SUITE   (x)
 Calloc   (x) to debug (x)
 Realloc  (x) to debug (x)
 Free  (x) working (x)

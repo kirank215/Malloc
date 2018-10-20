@@ -4,6 +4,7 @@ uses a free list pointner that saves the list of free block helping optimize
 search of further blocks. The list is at first placed globally and updated
 everytime when free() is called and when malloc is causes a split in the 
 blocks.
+My malloc cannot handle opening real functions like chromium or gimp.
 
 ----- USAGE ----- 
 LD_PRELOAD=./libmalloc.so ( COMMAND )
