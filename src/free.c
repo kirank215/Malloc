@@ -5,6 +5,7 @@
 #define METASIZE allign(sizeof(struct metadata))
 
 extern struct metadata *freelist;
+
     __attribute__((visibility("hidden")))
 int is_alligned(void *p)
 {
@@ -26,6 +27,7 @@ void *mycopy(void *a , void *b , size_t size)
     }   
     return dest;
 }
+
     __attribute__((visibility("default")))
 void free(void __attribute__((unused)) *ptr)
 {
@@ -41,6 +43,7 @@ void free(void __attribute__((unused)) *ptr)
     block->is_free = 1;
     add_to_free(freelist , block);  // add to free list if could not merge
 }
+
     __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
         size_t __attribute__((unused)) size)

@@ -42,12 +42,14 @@ void remove_from_free(struct metadata *fl , struct metadata *block)
     for(; fl->nxt_free != block; fl = fl->nxt_free);
     fl->nxt_free = fl->nxt_free->nxt_free; 
 }
+
     __attribute__((visibility("hidden")))
 void add_to_free(struct metadata *fl , struct metadata *block)
 {
     for(; fl->nxt_free != NULL; fl = fl->nxt_free);
     fl->nxt_free = block;
 }
+
     __attribute__((visibility("hidden")))
 void *newpage(int size)
 {
@@ -61,6 +63,7 @@ void *newpage(int size)
     return block;
 
 }
+
     __attribute__((visibility("hidden")))
 struct metadata *find_block(size_t size)
 {
