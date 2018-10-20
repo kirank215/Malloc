@@ -2,8 +2,8 @@ FREE LIST IMPLEMENTATION  (x)
 Malloc     (x)   working (x)
 Separate functions (x)
 TEST SUITE
-Calloc   (x) to debug
-Realloc  (x) to debug 
+Calloc   (x) to debug (x)
+Realloc  (x) to debug (x)
 Free  (x) working (x)
 
 TESTS :
@@ -11,8 +11,8 @@ TESTS :
 — ls -la (x)
 — tar -cf malloc.tar libmalloc.so (x)
 — find /    (x)
-— tree /    ------
+— tree /    (x)
 — od libmalloc.so (x)
-— git status ---------
+— git status (x)
 — less Makefile (x)
 — clang -h  ------
