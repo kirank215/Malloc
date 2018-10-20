@@ -40,16 +40,16 @@ void free(void __attribute__((unused)) *ptr)
         return ;
     }
     struct metadata *block = addpointer(ptr , -METASIZE);
-    //warnx("free of size %ld" , block->size);
     block->is_free = 1;
     add_to_free(freelist , block);
-    //print_fl(freelist);
+   // warnx("free of size %ld" , block->size);
+   // print_fl(freelist);
 }
     __attribute__((visibility("default")))
 void *calloc(size_t __attribute__((unused)) nmemb,
         size_t __attribute__((unused)) size)
 {
-    //warnx("calloc");
+ //   warnx("calloc");
     size_t numbytes = nmemb * size;
     if( nmemb != 0 && numbytes/nmemb != size)
         warnx("overflow");
@@ -71,19 +71,22 @@ void *realloc(void __attribute__((unused)) *ptr,
         free(ptr);
     if(is_alligned(ptr) == 0)
         return NULL; 
-    struct metadata *block = ptr;
-    block = addpointer(block , - METASIZE);
+    struct metadata *block;
+    block = addpointer(ptr , - METASIZE);
     //warnx(" Realloc of %ld from %ld" , size , block->size);
     if(block->size > size)
-        return block;
-    /* Free block -- Check merge of block with prev and next -- If succesfull
+        return ptr;
+    /*
+     Free block -- Check merge of block with prev and next -- If succesfull
         use for realloc -- 
     [ -- !!  call merge everytime you free with the block you free     !! -- ] 
     */
-    free(addpointer(block,METASIZE));
+    
+    free(ptr);
     struct metadata *new_b = malloc(size);
     if(new_b == NULL)
         return NULL;
-    new_b = mycopy(block , new_b , block->size);
+    new_b = mycopy(ptr , new_b , block->size);
     return new_b;
+    return NULL;
 }
