@@ -5,6 +5,7 @@
 #define METASIZE allign(sizeof(struct metadata))
 struct metadata *freelist = NULL;
 
+    __attribute__((visibility("hidden")))
 void *addpointer(void *b , int a)
 {
     char *s = b;
@@ -12,12 +13,14 @@ void *addpointer(void *b , int a)
     return s;
 }
 
+    __attribute__((visibility("hidden")))
 int allign( size_t s)
 {
     int size = sizeof(size_t);
     s = (s + (size - 1)) & ~(size - 1);
     return s;
 }
+    __attribute__((visibility("hidden")))
 void set_block(struct metadata *b ,size_t s , int free ,\
         struct metadata *n ,struct metadata *p , struct metadata *nf )
 {
@@ -28,6 +31,7 @@ void set_block(struct metadata *b ,size_t s , int free ,\
     b->nxt_free= nf;
 }
 
+    __attribute__((visibility("hidden")))
 void remove_from_free(struct metadata *fl , struct metadata *block)
 {
     if(fl == block)
@@ -38,11 +42,13 @@ void remove_from_free(struct metadata *fl , struct metadata *block)
     for(; fl->nxt_free != block; fl = fl->nxt_free);
     fl->nxt_free = fl->nxt_free->nxt_free; 
 }
+    __attribute__((visibility("hidden")))
 void add_to_free(struct metadata *fl , struct metadata *block)
 {
     for(; fl->nxt_free != NULL; fl = fl->nxt_free);
     fl->nxt_free = block;
 }
+    __attribute__((visibility("hidden")))
 void *newpage(int size)
 {
     struct metadata *block;
@@ -55,6 +61,7 @@ void *newpage(int size)
     return block;
 
 }
+    __attribute__((visibility("hidden")))
 struct metadata *find_block(size_t size)
 {
     struct metadata *block;
@@ -83,6 +90,7 @@ struct metadata *find_block(size_t size)
     return block;
 }
 
+    __attribute__((visibility("hidden")))
 void add_block(struct metadata *b1 , size_t s)
 {
     if((b1->size) > s + 2* METASIZE) //split- create a new block if you can

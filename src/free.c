@@ -5,6 +5,7 @@
 #define METASIZE allign(sizeof(struct metadata))
 
 extern struct metadata *freelist;
+    __attribute__((visibility("hidden")))
 int is_alligned(void *p)
 {
     uintptr_t s = (sizeof(size_t)) - 1;
@@ -13,6 +14,8 @@ int is_alligned(void *p)
         return 1;
     return 0;
 }
+
+    __attribute__((visibility("hidden")))
 void *mycopy(void *a , void *b , size_t size)
 {
     char *src = a;
